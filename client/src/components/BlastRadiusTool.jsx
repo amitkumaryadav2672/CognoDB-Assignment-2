@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from 'react';
+import { ShieldAlert, Zap, DollarSign, Users, Package, Play, Code2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { getFallbackBlastRadius, FALLBACK_NODES } from '../utils/mockFallbackData';
 
 export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastRadius }) {
