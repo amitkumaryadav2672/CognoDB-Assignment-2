@@ -112,7 +112,7 @@ export default function App() {
       {/* Footer */}
       <footer className="border-t border-slate-800/80 py-4 px-6 text-center text-xs text-slate-500">
         <p>
-          Wexa AI Take-Home Assignment — Built with <strong>CognoDB Cloud (openCypher)</strong> & React
+          Wexa AI Take-Home Assignment — Developed by <strong className="text-slate-300">Amit Kumar Yadav</strong> — Built with <strong>CognoDB Cloud (openCypher)</strong> & React
         </p>
       </footer>
 

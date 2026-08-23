@@ -1,6 +1,7 @@
 # NexusGraph - Enterprise Supply Chain and Vulnerability Blast Radius Engine
 
 Wexa AI - Take-Home Assignment: Graph Database Application  
+Developed by **Amit Kumar Yadav**  
 Backed by CognoDB Cloud (openCypher over Bolt protocol using official Neo4j Driver)
 
 - **Live Application Demo**: [https://cogno-db-assignment-2-flame.vercel.app/](https://cogno-db-assignment-2-flame.vercel.app/)
@@ -302,10 +303,11 @@ If CognoDB Cloud is temporarily unreachable or if environment credentials are no
 
 ## Submission Details
 
+- **Author / Developer**: **Amit Kumar Yadav**
 - **GitHub Repository**: [https://github.com/amitkumaryadav2672/CognoDB-Assignment-2](https://github.com/amitkumaryadav2672/CognoDB-Assignment-2)
 - **Hosted Application Demo**: [https://cogno-db-assignment-2-flame.vercel.app/](https://cogno-db-assignment-2-flame.vercel.app/)
 - **Email Recipient**: hr@wexa.ai
-- **Email Subject Line**: CognoDB Assignment 2 - <Your Name>
+- **Email Subject Line**: CognoDB Assignment 2 - Amit Kumar Yadav
 - **Instance Persistence**: The CognoDB instance db-1dd427e3 will remain active for live evaluation.
 
-Developed for the Wexa AI Take-Home Assignment.
+Developed by **Amit Kumar Yadav** for the Wexa AI Take-Home Assignment.
