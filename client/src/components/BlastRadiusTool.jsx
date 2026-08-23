@@ -41,7 +41,7 @@ export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastR
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      
+
       {/* Header & Controls Card */}
       <div className="glass-panel p-6 rounded-2xl border border-slate-800 shadow-2xl">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
@@ -112,7 +112,7 @@ export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastR
       {/* Results Dashboard */}
       {result && (
         <div className="space-y-6">
-          
+
           {/* Summary Metrics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="glass-card p-5 rounded-2xl border border-slate-800 flex items-center gap-4">
@@ -176,7 +176,7 @@ export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastR
 
           {/* Impacted Downstream Entities List */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
+
             {/* Impacted Customers */}
             <div className="glass-panel p-5 rounded-2xl border border-slate-800">
               <h3 className="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">

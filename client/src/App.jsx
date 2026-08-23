@@ -5,6 +5,7 @@ import GraphVisualizer from './components/GraphVisualizer';
 import BlastRadiusTool from './components/BlastRadiusTool';
 import BottleneckFinder from './components/BottleneckFinder';
 import QueryConsole from './components/QueryConsole';
+import WhyGraphModal from './components/WhyGraphModal';
 import { FALLBACK_GRAPH_PAYLOAD } from './utils/mockFallbackData';
 
 export default function App() {
