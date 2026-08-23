@@ -187,6 +187,31 @@ export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastR
             </div>
           </div>
 
+          {/* Step-by-Step Multi-Hop Traversal Timeline */}
+          {result.steps && result.steps.length > 0 && (
+            <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+              <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
+                <Play className="h-4 w-4 text-rose-400" />
+                Step-by-Step Multi-Hop Graph Traversal Sequence ({result.queryParams?.maxHops} Hops Deep)
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                {result.steps.map((st, idx) => (
+                  <div key={idx} className="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between space-y-2">
+                    <div>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                        Step {st.step}
+                      </span>
+                      <h4 className="text-xs font-bold text-slate-200 mt-2">{st.title}</h4>
+                      <p className="text-[11px] font-mono text-cyan-300 mt-1">{st.node}</p>
+                    </div>
+                    <p className="text-[10px] text-slate-400 border-t border-slate-800/80 pt-1.5">{st.details}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Impacted Downstream Entities List */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
