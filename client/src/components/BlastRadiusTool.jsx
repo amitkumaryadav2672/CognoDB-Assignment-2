@@ -11,24 +11,27 @@ export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastR
 
   const startNodes = activeNodes.filter(n => ['Vulnerability', 'Supplier', 'Component', 'Facility'].includes(n.label));
 
-  const handleRunAnalysis = async () => {
+  const handleRunAnalysis = async (nodeId = selectedNodeId, hops = maxHops) => {
     setLoading(true);
+    const activeNodeId = nodeId || selectedNodeId;
+    const activeHops = Number(hops) || Number(maxHops) || 5;
+
     try {
       const res = await fetch('/api/graph/blast-radius', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startNodeId: selectedNodeId, maxHops: Number(maxHops) })
+        body: JSON.stringify({ startNodeId: activeNodeId, maxHops: activeHops })
       });
       const contentType = res.headers.get('content-type') || '';
       if (res.ok && contentType.includes('application/json')) {
         const data = await res.json();
         setResult(data);
       } else {
-        setResult(getFallbackBlastRadius(selectedNodeId, Number(maxHops)));
+        setResult(getFallbackBlastRadius(activeNodeId, activeHops));
       }
     } catch (err) {
       console.warn('Blast radius API call failed, falling back to local calculation:', err.message);
-      setResult(getFallbackBlastRadius(selectedNodeId, Number(maxHops)));
+      setResult(getFallbackBlastRadius(activeNodeId, activeHops));
     } finally {
       setLoading(false);
     }
@@ -38,8 +41,8 @@ export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastR
     if (initialNodeId) {
       setSelectedNodeId(initialNodeId);
     }
-    handleRunAnalysis();
-  }, [initialNodeId]);
+    handleRunAnalysis(initialNodeId || selectedNodeId, maxHops);
+  }, [initialNodeId, selectedNodeId, maxHops]);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -79,7 +82,11 @@ export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastR
             </label>
             <select
               value={selectedNodeId}
-              onChange={e => setSelectedNodeId(e.target.value)}
+              onChange={e => {
+                const val = e.target.value;
+                setSelectedNodeId(val);
+                handleRunAnalysis(val, maxHops);
+              }}
               className="w-full bg-slate-950 text-xs text-slate-100 p-2.5 rounded-xl border border-slate-800 focus:border-rose-500 outline-none"
             >
               {startNodes.map(node => (
@@ -100,7 +107,11 @@ export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastR
                 min="1"
                 max="5"
                 value={maxHops}
-                onChange={e => setMaxHops(e.target.value)}
+                onChange={e => {
+                  const val = Number(e.target.value);
+                  setMaxHops(val);
+                  handleRunAnalysis(selectedNodeId, val);
+                }}
                 className="flex-1 accent-rose-500 cursor-pointer"
               />
               <span className="px-3 py-1 bg-slate-950 text-xs font-mono font-bold text-rose-400 border border-slate-800 rounded-lg">

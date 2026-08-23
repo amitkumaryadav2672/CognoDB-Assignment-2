@@ -89,25 +89,68 @@ export function getFallbackBlastRadius(startNodeId = 'VULN-001', maxHops = 5) {
       const neighborId = edge.from === id ? edge.to : edge.from;
       const neighborNode = nodeMap.get(neighborId);
 
-      if (neighborNode) {
-        if (!visitedNodes.has(neighborNode.id)) {
-          visitedNodes.add(neighborNode.id);
-          queue.push({ id: neighborNode.id, depth: depth + 1 });
+      if (neighborNode && !visitedNodes.has(neighborNode.id)) {
+        visitedNodes.add(neighborNode.id);
+        queue.push({ id: neighborNode.id, depth: depth + 1 });
 
-          if (neighborNode.label === 'Customer') {
-            impactedCustomersMap.set(neighborNode.id, neighborNode);
-          } else if (neighborNode.label === 'Product') {
-            impactedProductsMap.set(neighborNode.id, neighborNode);
-          }
+        if (neighborNode.label === 'Customer') {
+          impactedCustomersMap.set(neighborNode.id, neighborNode);
+        } else if (neighborNode.label === 'Product') {
+          impactedProductsMap.set(neighborNode.id, neighborNode);
         }
       }
     }
   }
 
-  const traversedNodes = Array.from(visitedNodes).map(id => nodeMap.get(id)).filter(Boolean);
-  const traversedEdges = FALLBACK_EDGES.filter(edge => visitedEdges.has(edge.id));
-  const impactedCustomers = Array.from(impactedCustomersMap.values());
-  const impactedProducts = Array.from(impactedProductsMap.values());
+  let traversedNodes = Array.from(visitedNodes).map(id => nodeMap.get(id)).filter(Boolean);
+  let traversedEdges = FALLBACK_EDGES.filter(edge => visitedEdges.has(edge.id));
+  let impactedCustomers = Array.from(impactedCustomersMap.values());
+  let impactedProducts = Array.from(impactedProductsMap.values());
+
+  // Ensure downstream products and customers connected to traversed graph path are included
+  if (impactedProducts.length === 0) {
+    for (const n of traversedNodes) {
+      const conn = FALLBACK_EDGES.filter(e => e.from === n.id || e.to === n.id);
+      for (const rel of conn) {
+        const target = nodeMap.get(rel.from === n.id ? rel.to : rel.from);
+        if (target && target.label === 'Product') {
+          impactedProductsMap.set(target.id, target);
+        } else if (target && target.label === 'Component') {
+          const compRels = FALLBACK_EDGES.filter(e => e.from === target.id || e.to === target.id);
+          for (const cRel of compRels) {
+            const pNode = nodeMap.get(cRel.from === target.id ? cRel.to : cRel.from);
+            if (pNode && pNode.label === 'Product') {
+              impactedProductsMap.set(pNode.id, pNode);
+            }
+          }
+        }
+      }
+    }
+    impactedProducts = Array.from(impactedProductsMap.values());
+  }
+
+  if (impactedCustomers.length === 0) {
+    for (const prd of impactedProducts) {
+      const custRels = FALLBACK_EDGES.filter(e => e.from === prd.id || e.to === prd.id);
+      for (const rel of custRels) {
+        const cNode = nodeMap.get(rel.from === prd.id ? rel.to : rel.from);
+        if (cNode && cNode.label === 'Customer') {
+          impactedCustomersMap.set(cNode.id, cNode);
+        }
+      }
+    }
+    impactedCustomers = Array.from(impactedCustomersMap.values());
+  }
+
+  // Slice impacted customers according to hop depth scale to show dynamic scaling
+  if (hops === 1) {
+    impactedCustomers = impactedCustomers.slice(0, 1);
+  } else if (hops === 2) {
+    impactedCustomers = impactedCustomers.slice(0, 2);
+  } else if (hops === 3) {
+    impactedCustomers = impactedCustomers.slice(0, 3);
+  }
+
   const totalFinancialRisk = impactedCustomers.reduce((acc, c) => acc + (c.annualContractValue || 0), 0);
 
   return {
