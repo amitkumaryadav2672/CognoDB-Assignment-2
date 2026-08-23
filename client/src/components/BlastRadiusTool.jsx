@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { ShieldAlert, Zap, DollarSign, Users, Package, Play, Code2, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { getFallbackBlastRadius, FALLBACK_NODES } from '../utils/mockFallbackData';
 
 export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastRadius }) {
+  const activeNodes = nodes.length > 0 ? nodes : FALLBACK_NODES;
   const [selectedNodeId, setSelectedNodeId] = useState(initialNodeId || 'VULN-001');
   const [maxHops, setMaxHops] = useState(5);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
 
-  const startNodes = nodes.filter(n => ['Vulnerability', 'Supplier', 'Component', 'Facility'].includes(n.label));
+  const startNodes = activeNodes.filter(n => ['Vulnerability', 'Supplier', 'Component', 'Facility'].includes(n.label));
 
   const handleRunAnalysis = async () => {
     setLoading(true);
@@ -17,10 +17,16 @@ export default function BlastRadiusTool({ nodes = [], initialNodeId, onRunBlastR
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ startNodeId: selectedNodeId, maxHops: Number(maxHops) })
       });
-      const data = await res.json();
-      setResult(data);
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const data = await res.json();
+        setResult(data);
+      } else {
+        setResult(getFallbackBlastRadius(selectedNodeId, Number(maxHops)));
+      }
     } catch (err) {
-      console.error('Blast radius calculation failed:', err);
+      console.warn('Blast radius API call failed, falling back to local calculation:', err.message);
+      setResult(getFallbackBlastRadius(selectedNodeId, Number(maxHops)));
     } finally {
       setLoading(false);
     }

@@ -9,6 +9,7 @@
     "server": "node server/index.js",
     "client": "npm run dev --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm --prefix client install && npm --prefix client run build",
     "seed": "node scripts/seed.js",
     "test": "echo \"Error: no test specified\" && exit 0"
   },

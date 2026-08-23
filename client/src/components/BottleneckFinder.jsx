@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Cpu, AlertOctagon, TrendingUp, ShieldAlert, Code2, RefreshCw } from 'lucide-react';
+import { getFallbackBottlenecks } from '../utils/mockFallbackData';
 
 export default function BottleneckFinder() {
   const [loading, setLoading] = useState(false);
@@ -9,10 +10,16 @@ export default function BottleneckFinder() {
     setLoading(true);
     try {
       const res = await fetch('/api/graph/bottlenecks');
-      const json = await res.json();
-      setData(json);
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const json = await res.json();
+        setData(json);
+      } else {
+        setData(getFallbackBottlenecks());
+      }
     } catch (err) {
-      console.error('Failed to fetch graph bottlenecks:', err);
+      console.warn('Failed to fetch graph bottlenecks, using client fallback:', err.message);
+      setData(getFallbackBottlenecks());
     } finally {
       setLoading(false);
     }

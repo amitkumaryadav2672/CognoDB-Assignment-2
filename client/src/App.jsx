@@ -5,12 +5,12 @@ import GraphVisualizer from './components/GraphVisualizer';
 import BlastRadiusTool from './components/BlastRadiusTool';
 import BottleneckFinder from './components/BottleneckFinder';
 import QueryConsole from './components/QueryConsole';
-import WhyGraphModal from './components/WhyGraphModal';
+import { FALLBACK_GRAPH_PAYLOAD } from './utils/mockFallbackData';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('canvas');
   const [dbStatus, setDbStatus] = useState(null);
-  const [graphData, setGraphData] = useState(null);
+  const [graphData, setGraphData] = useState(FALLBACK_GRAPH_PAYLOAD);
   const [loadingGraph, setLoadingGraph] = useState(false);
   const [isWhyModalOpen, setIsWhyModalOpen] = useState(false);
   const [selectedBlastRadiusId, setSelectedBlastRadiusId] = useState('VULN-001');
@@ -21,15 +21,41 @@ export default function App() {
     try {
       // 1. Fetch DB Health
       const healthRes = await fetch('/api/health');
-      const healthJson = await healthRes.json();
-      setDbStatus(healthJson);
+      const contentType = healthRes.headers.get('content-type') || '';
+      if (healthRes.ok && contentType.includes('application/json')) {
+        const healthJson = await healthRes.json();
+        setDbStatus(healthJson);
+      } else {
+        setDbStatus({
+          isConnected: false,
+          mode: 'Demo / Fallback Mode (Interactive In-Memory Graph)',
+          uri: 'Unconfigured',
+          user: 'cognodb'
+        });
+      }
 
       // 2. Fetch Full Graph
       const graphRes = await fetch('/api/graph/full');
-      const graphJson = await graphRes.json();
-      setGraphData(graphJson);
+      const graphContentType = graphRes.headers.get('content-type') || '';
+      if (graphRes.ok && graphContentType.includes('application/json')) {
+        const graphJson = await graphRes.json();
+        if (graphJson && graphJson.nodes && graphJson.nodes.length > 0) {
+          setGraphData(graphJson);
+        } else {
+          setGraphData(FALLBACK_GRAPH_PAYLOAD);
+        }
+      } else {
+        setGraphData(FALLBACK_GRAPH_PAYLOAD);
+      }
     } catch (err) {
-      console.error('Failed to connect to backend server:', err);
+      console.warn('Backend API connection unavailable, activating client fallback mode:', err.message);
+      setGraphData(FALLBACK_GRAPH_PAYLOAD);
+      setDbStatus({
+        isConnected: false,
+        mode: 'Demo / Fallback Mode (Interactive In-Memory Graph)',
+        uri: 'Unconfigured',
+        user: 'cognodb'
+      });
     } finally {
       setLoadingGraph(false);
     }
