@@ -1,0 +1,22 @@
+{
+  "name": "wexa-nexusgraph",
+  "version": "1.0.0",
+  "description": "NexusGraph - Enterprise Supply Chain & Vulnerability Blast Radius Engine backed by CognoDB openCypher Graph Database",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "node server/index.js",
+    "client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "seed": "node scripts/seed.js",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "dependencies": {
+    "concurrently": "^10.0.5",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "neo4j-driver": "^6.2.0"
+  }
+}

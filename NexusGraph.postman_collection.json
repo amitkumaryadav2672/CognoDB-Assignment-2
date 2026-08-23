@@ -1,0 +1,159 @@
+{
+  "info": {
+    "_postman_id": "nexusgraph-api-collection-2026",
+    "name": "NexusGraph Graph Database REST API",
+    "description": "Complete Postman Collection for testing all REST API endpoints of NexusGraph backed by CognoDB openCypher Graph Database.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. API Overview",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            ""
+          ]
+        },
+        "description": "Returns REST API service metadata, active port, and available endpoints."
+      },
+      "response": []
+    },
+    {
+      "name": "2. CognoDB Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "health"
+          ]
+        },
+        "description": "Checks connectivity status to CognoDB Cloud over Bolt protocol."
+      },
+      "response": []
+    },
+    {
+      "name": "3. Get Full Graph (Nodes & Edges)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/graph/full",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "graph",
+            "full"
+          ]
+        },
+        "description": "Fetches full topology nodes and relationships for visual graph rendering."
+      },
+      "response": []
+    },
+    {
+      "name": "4. Multi-Hop Blast Radius Simulation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startNodeId\": \"VULN-001\",\n  \"maxHops\": 5\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/graph/blast-radius",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "graph",
+            "blast-radius"
+          ]
+        },
+        "description": "Executes 1-5 hop variable length openCypher traversal to compute total financial contract risk and affected customers."
+      },
+      "response": []
+    },
+    {
+      "name": "5. Discover Single Point of Failure Bottlenecks",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/graph/bottlenecks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "graph",
+            "bottlenecks"
+          ]
+        },
+        "description": "Discovers structural bottlenecks and single-source supplier/component dependencies."
+      },
+      "response": []
+    },
+    {
+      "name": "6. Execute Parameterised openCypher Query",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cypher\": \"MATCH path = (v:Vulnerability {id: $startNodeId})-[*1..5]->(c:Customer) RETURN path, sum(c.annualContractValue) AS totalRisk\",\n  \"params\": {\n    \"startNodeId\": \"VULN-001\"\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/graph/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "graph",
+            "query"
+          ]
+        },
+        "description": "Executes arbitrary parameterised openCypher queries."
+      },
+      "response": []
+    }
+  ]
+}
