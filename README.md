@@ -3,6 +3,9 @@
 Wexa AI - Take-Home Assignment: Graph Database Application  
 Backed by CognoDB Cloud (openCypher over Bolt protocol using official Neo4j Driver)
 
+- **Live Application Demo**: [https://cogno-db-assignment-2-flame.vercel.app/](https://cogno-db-assignment-2-flame.vercel.app/)
+- **GitHub Repository**: [https://github.com/amitkumaryadav2672/CognoDB-Assignment-2](https://github.com/amitkumaryadav2672/CognoDB-Assignment-2)
+
 NexusGraph is a full-stack graph database application built to solve supply chain vulnerability and multi-hop risk blast radius analysis. In modern global supply networks and complex software architectures, disruptions like material shortages, hardware defects, or vendor vulnerabilities ripple transitively across multi-tier dependency chains. 
 
 NexusGraph leverages CognoDB Cloud to perform sub-millisecond multi-hop openCypher traversals, identifying affected downstream products, calculating total financial revenue exposed across enterprise customer contracts, and discovering structural single-point-of-failure bottlenecks.
@@ -299,9 +302,10 @@ If CognoDB Cloud is temporarily unreachable or if environment credentials are no
 
 ## Submission Details
 
-- Deliverable: GitHub Repository URL
-- Email Recipient: hr@wexa.ai
-- Email Subject Line: CognoDB Assignment 2 - <Your Name>
-- Instance Persistence: The CognoDB instance db-1dd427e3 will remain active for live evaluation.
+- **GitHub Repository**: [https://github.com/amitkumaryadav2672/CognoDB-Assignment-2](https://github.com/amitkumaryadav2672/CognoDB-Assignment-2)
+- **Hosted Application Demo**: [https://cogno-db-assignment-2-flame.vercel.app/](https://cogno-db-assignment-2-flame.vercel.app/)
+- **Email Recipient**: hr@wexa.ai
+- **Email Subject Line**: CognoDB Assignment 2 - <Your Name>
+- **Instance Persistence**: The CognoDB instance db-1dd427e3 will remain active for live evaluation.
 
 Developed for the Wexa AI Take-Home Assignment.
