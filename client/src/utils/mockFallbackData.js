@@ -68,25 +68,62 @@ export const FALLBACK_GRAPH_PAYLOAD = {
 };
 
 export function getFallbackBlastRadius(startNodeId = 'VULN-001', maxHops = 5) {
-  const startNode = FALLBACK_NODES.find(n => n.id === startNodeId) || FALLBACK_NODES[0];
-  const impactedCustomers = FALLBACK_NODES.filter(n => n.label === 'Customer');
-  const impactedProducts = FALLBACK_NODES.filter(n => n.label === 'Product');
+  const nodeMap = new Map(FALLBACK_NODES.map(n => [n.id, n]));
+  const startNode = nodeMap.get(startNodeId) || FALLBACK_NODES[0];
+  const hops = Math.min(Math.max(Number(maxHops) || 5, 1), 5);
+
+  const visitedNodes = new Set([startNode.id]);
+  const visitedEdges = new Set();
+  const queue = [{ id: startNode.id, depth: 0 }];
+  const impactedCustomersMap = new Map();
+  const impactedProductsMap = new Map();
+
+  while (queue.length > 0) {
+    const { id, depth } = queue.shift();
+    if (depth >= hops) continue;
+
+    const connectedEdges = FALLBACK_EDGES.filter(edge => edge.from === id || edge.to === id);
+
+    for (const edge of connectedEdges) {
+      visitedEdges.add(edge.id);
+      const neighborId = edge.from === id ? edge.to : edge.from;
+      const neighborNode = nodeMap.get(neighborId);
+
+      if (neighborNode) {
+        if (!visitedNodes.has(neighborNode.id)) {
+          visitedNodes.add(neighborNode.id);
+          queue.push({ id: neighborNode.id, depth: depth + 1 });
+
+          if (neighborNode.label === 'Customer') {
+            impactedCustomersMap.set(neighborNode.id, neighborNode);
+          } else if (neighborNode.label === 'Product') {
+            impactedProductsMap.set(neighborNode.id, neighborNode);
+          }
+        }
+      }
+    }
+  }
+
+  const traversedNodes = Array.from(visitedNodes).map(id => nodeMap.get(id)).filter(Boolean);
+  const traversedEdges = FALLBACK_EDGES.filter(edge => visitedEdges.has(edge.id));
+  const impactedCustomers = Array.from(impactedCustomersMap.values());
+  const impactedProducts = Array.from(impactedProductsMap.values());
   const totalFinancialRisk = impactedCustomers.reduce((acc, c) => acc + (c.annualContractValue || 0), 0);
 
   return {
     success: true,
-    source: 'Fallback Blast Radius Engine (Client In-Memory)',
-    cypherQuery: `MATCH path = (start {id: '${startNodeId}'})-[*1..${maxHops}]->(target) RETURN path`,
-    queryParams: { startNodeId, maxHops },
-    nodesCount: FALLBACK_NODES.length,
-    edgesCount: FALLBACK_EDGES.length,
+    source: 'Fallback Blast Radius Engine (Dynamic Multi-Hop BFS)',
+    cypherQuery: `MATCH path = (v {id: $startNodeId})-[r:IMPACTS|THREATENS|OPERATES|MANUFACTURING|DEPENDS_ON|USED_IN|DELIVERED_TO*1..${hops}]->(c:Customer)\nRETURN path, sum(c.annualContractValue) AS totalFinancialRisk`,
+    queryParams: { startNodeId: startNode.id, maxHops: hops },
+    nodesCount: traversedNodes.length,
+    edgesCount: traversedEdges.length,
     impactedTargetsCount: impactedCustomers.length + impactedProducts.length,
     impactedCustomersCount: impactedCustomers.length,
     impactedProductsCount: impactedProducts.length,
     totalFinancialRisk,
     startNode,
-    nodes: FALLBACK_NODES,
-    edges: FALLBACK_EDGES,
+    nodes: traversedNodes,
+    edges: traversedEdges,
     impactedCustomers,
     impactedProducts
   };

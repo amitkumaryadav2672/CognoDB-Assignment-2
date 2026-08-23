@@ -120,10 +120,10 @@ router.post('/blast-radius', async (req, res) => {
   }
 
   try {
-    // Dynamic Cypher query matching paths up to maxHops from start node by id or name property
+    const hops = Math.min(Math.max(Number(maxHops) || 5, 1), 5);
     const cypher = `
       MATCH (start) WHERE start.id = $startNodeId OR start.name = $startNodeId OR elementId(start) = $startNodeId
-      MATCH path = (start)-[*1..5]->(target)
+      MATCH path = (start)-[*1..${hops}]->(target)
       WITH path, nodes(path) AS pathNodes, relationships(path) AS pathRels, target
       UNWIND pathNodes AS n
       UNWIND pathRels AS rel
